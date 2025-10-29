@@ -30,6 +30,9 @@ public class Lotto {
             if(Collections.frequency(numbers, num) > 1) {
                 throw new IllegalArgumentException("[ERROR] 로또 번호에 중복된 숫자가 있습니다.");
             }
+            if(num <= 0 || num > 45) {
+                throw new IllegalArgumentException("[ERROR] 로또 번호는 1부터 45 사이 숫자여야 합니다.");
+            }
         }
     }
 
