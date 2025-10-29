@@ -33,6 +33,8 @@ public class LottoResult {
      * @return 수익률(%)
      */
     public double getRateOfReturn() {
+        rateOfReturn = (double)winningMoney / purchaseMoney * 100;
+        rateOfReturn = Math.round(rateOfReturn * 100.0) / 100.0;
         return rateOfReturn;
     }
 
@@ -47,7 +49,6 @@ public class LottoResult {
 
     /**
      * 당첨 번호와 보너스 번호를 받아 당첨 결과를 분석합니다.
-     *
      * @param winningLotto 당첨 번호 목록
      * @param bonusWinningNumber    보너스 번호
      * @return 각 등수별 당첨 갯수를 포함한 배열
@@ -58,36 +59,37 @@ public class LottoResult {
             int sameNumber = 0;
             for(int i=0; i<lotto.size(); i++) {
                 for(int j=0; j<winningLotto.size(); j++) {
-                    if (lotto.get(i).equals(winningLotto.get(j)))
-                        sameNumber++;
+                    if (lotto.get(i).equals(winningLotto.get(j))) sameNumber++;
                 }
             }
             boolean bonusCheck = false;
-            for(int i=0; i<lotto.size(); i++) {
-                if(lotto.get(i).equals(bonusWinningNumber)) {
-                    bonusCheck = true;
-                    break;
-                }
-            }
-            if(sameNumber == 3){
-                winningMoney += winningPrize[0];
-                resultList[0]++;
-            } else if (sameNumber == 4) {
-                winningMoney += winningPrize[1];
-                resultList[1]++;
-            } else if (sameNumber == 5 && bonusCheck == false) {
-                winningMoney += winningPrize[2];
-                resultList[2]++;
-            } else if (sameNumber == 5 && bonusCheck == true) {
-                winningMoney += winningPrize[3];
-                resultList[3]++;
-            } else if (sameNumber == 6) {
-                winningMoney += winningPrize[4];
-                resultList[4]++;
-            }
-            rateOfReturn = (double)winningMoney / purchaseMoney * 100;
-            rateOfReturn = Math.round(rateOfReturn * 100.0) / 100.0;
+            if(lotto.contains(bonusWinningNumber)) bonusCheck = true;
+            checkWinningPrize(sameNumber,bonusCheck);
         }
         return resultList;
+    }
+
+    /**
+     * 당첨 번호 개수와 보너스 번호 적중 여부로 결과를 계산합니다.
+     * @param sameNumber  로또 적중 여부 개수
+     * @param bonusCheck  보너스 번호 적중 여부
+     */
+    private void checkWinningPrize(int sameNumber, boolean bonusCheck) {
+        if(sameNumber == 3){
+            winningMoney += winningPrize[0];
+            resultList[0]++;
+        } else if (sameNumber == 4) {
+            winningMoney += winningPrize[1];
+            resultList[1]++;
+        } else if (sameNumber == 5 && bonusCheck == false) {
+            winningMoney += winningPrize[2];
+            resultList[2]++;
+        } else if (sameNumber == 5 && bonusCheck == true) {
+            winningMoney += winningPrize[3];
+            resultList[3]++;
+        } else if (sameNumber == 6) {
+            winningMoney += winningPrize[4];
+            resultList[4]++;
+        }
     }
 }

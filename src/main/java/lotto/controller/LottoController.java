@@ -26,6 +26,23 @@ public class LottoController {
     }
 
     /**
+     * 로또 프로그램 실행 로직
+     */
+    public void run() {
+        try {
+            int lottoQuantity = inputPurchaseMoney();
+            buyingLotto(lottoQuantity);
+            List<Integer> winningNumbers = inputWinningNumbers();
+            int bonusWinningNumber = bonusWinningNumber(winningNumbers);
+            int resultList[] = lottoResult.addResult(winningNumbers, bonusWinningNumber);
+            double rateOfReturn = lottoResult.getRateOfReturn();
+            outputView.outputResult(resultList, rateOfReturn);
+        } catch (Exception e) {
+            outputView.printError("예기치 못한 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    /**
      * 구매 금액을 입력받고, 1000원 단위 검증 및 예외처리를 수행합니다.
      * @return 구입할 로또 장수
      */
@@ -71,26 +88,43 @@ public class LottoController {
             try {
                 outputView.inputWinningLotto();
                 String inputList = inputView.readInput();
-                String[] tokens = inputList.split(",");
-                if (tokens.length != 6) {
-                    throw new IllegalArgumentException("로또 번호는 6개여야 합니다.");
-                }
-                List<Integer> winningNumbers = new ArrayList<>();
-                for (String token : tokens) {
-                    int num = Integer.parseInt(token);
-                    if (num < 1 || num > 45) {
-                        throw new IllegalArgumentException("로또 번호는 1부터 45 사이 숫자여야 합니다.");
-                    }
-                    if (winningNumbers.contains(num)) {
-                        throw new IllegalArgumentException("중복된 번호가 있습니다.");
-                    }
-                    winningNumbers.add(num);
-                }
-                Collections.sort(winningNumbers);
-                return winningNumbers;
+                return validateWinningNumbers(inputList);
             } catch (IllegalArgumentException e) {
                 outputView.printError(e.getMessage());
             }
+        }
+    }
+
+    private List<Integer> validateWinningNumbers(String inputList) {
+        String[] tokens = inputList.split(",");
+        if (tokens.length != 6) {
+            throw new IllegalArgumentException("로또 번호는 6개여야 합니다.");
+        }
+        List<Integer> winningNumbers = parseAndValidateNumbers(tokens);
+        Collections.sort(winningNumbers);
+        return winningNumbers;
+    }
+
+    private List<Integer> parseAndValidateNumbers(String[] tokens) {
+        List<Integer> winningNumbers = new ArrayList<>();
+        for (String token : tokens) {
+            int num = Integer.parseInt(token.trim());
+            validateLottoNumberRange(num);
+            validateDuplicateNumber(winningNumbers, num);
+            winningNumbers.add(num);
+        }
+        return winningNumbers;
+    }
+
+    private void validateLottoNumberRange(int num) {
+        if (num < 1 || num > 45) {
+            throw new IllegalArgumentException("로또 번호는 1부터 45 사이 숫자여야 합니다.");
+        }
+    }
+
+    private void validateDuplicateNumber(List<Integer> numbers, int num) {
+        if (numbers.contains(num)) {
+            throw new IllegalArgumentException("중복된 번호가 있습니다.");
         }
     }
 
@@ -104,33 +138,22 @@ public class LottoController {
             try{
                 outputView.inputBonusLotto();
                 int bonus = Integer.parseInt(inputView.readInput());
-                if(bonus < 1 || bonus > 45) {
-                    throw new IllegalArgumentException("보너스 번호는 1분터 45 사이 숫자여야 합니다.");
-                }
-                if(winningNumbers.contains(bonus)) {
-                    throw new IllegalArgumentException("당첨 번호와 중복된 보너스 번호입니다.");
-                }
+                validateBonusNumber(winningNumbers, bonus);
                 return bonus;
-            }catch (IllegalArgumentException e) {
+            } catch (NumberFormatException e) {
+                outputView.printError("숫자만 입력가능합니다.");
+            } catch (IllegalArgumentException e) {
                 outputView.printError(e.getMessage());
             }
         }
     }
 
-    /**
-     * 로또 프로그램 실행 로직
-     */
-    public void run() {
-        try {
-            int lottoQuantity = inputPurchaseMoney();
-            buyingLotto(lottoQuantity);
-            List<Integer> winningNumbers = inputWinningNumbers();
-            int bonusWinningNumber = bonusWinningNumber(winningNumbers);
-            int resultList[] = lottoResult.addResult(winningNumbers, bonusWinningNumber);
-            double rateOfReturn = lottoResult.getRateOfReturn();
-            outputView.outputResult(resultList, rateOfReturn);
-        } catch (Exception e) {
-            outputView.printError("예기치 못한 오류가 발생했습니다: " + e.getMessage());
+    private void validateBonusNumber(List<Integer> winningNumbers, int bonus) {
+        if(bonus < 1 || bonus > 45) {
+            throw new IllegalArgumentException("보너스 번호는 1부터 45 사이 숫자여야 합니다.");
+        }
+        if(winningNumbers.contains(bonus)) {
+            throw new IllegalArgumentException("당첨 번호와 중복된 보너스 번호입니다.");
         }
     }
 }
