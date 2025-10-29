@@ -55,7 +55,7 @@ public class LottoController {
         outputView.outputPurchaseCount(quantity);
         for(int i = 0; i < quantity; i++) {
             List<Integer>lottoNumber = lottoGenerator.generate();
-            Lotto lotto = new Lotto(lottoNumber);
+            Lotto lotto = new Lotto(new ArrayList<>(lottoNumber));
             lotto.sortingNumbers();
             lottoResult.addMyLotto(lotto);
             outputView.outputPurchasedLotto(lotto.getLottoNumbers());
