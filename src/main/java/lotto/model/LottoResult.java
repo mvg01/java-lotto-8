@@ -85,8 +85,8 @@ public class LottoResult {
                 winningMoney += winningPrize[4];
                 resultList[4]++;
             }
-            rateOfReturn = winningMoney/purchaseMoney*100;
-            rateOfReturn = Math.round(rateOfReturn*100.0)/100.0;
+            rateOfReturn = (double)winningMoney / purchaseMoney * 100;
+            rateOfReturn = Math.round(rateOfReturn * 100.0) / 100.0;
         }
         return resultList;
     }
