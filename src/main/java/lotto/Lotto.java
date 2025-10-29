@@ -26,6 +26,11 @@ public class Lotto {
         if (numbers.size() != 6) {
             throw new IllegalArgumentException("[ERROR] 로또 번호는 6개여야 합니다.");
         }
+        for(int num: numbers) {
+            if(Collections.frequency(numbers, num) > 1) {
+                throw new IllegalArgumentException("[ERROR] 로또 번호에 중복된 숫자가 있습니다.");
+            }
+        }
     }
 
     /**
