@@ -1,5 +1,7 @@
 package lotto.view;
 
+import lotto.model.LottoType;
+
 import java.util.List;
 
 /**
@@ -67,13 +69,16 @@ public class OutputView {
         System.out.println();
         System.out.println("당첨 통계");
         System.out.println("---");
-        System.out.println("3개 일치 (5,000원) - "+resultList[0]+"개");
-        System.out.println("4개 일치 (50,000원) - "+resultList[1]+"개");
-        System.out.println("5개 일치 (1,500,000원) - "+resultList[2]+"개");
-        System.out.println("5개 일치, 보너스 볼 일치 (30,000,000원) - "+resultList[3]+"개");
-        System.out.println("6개 일치 (2,000,000,000원) - "+resultList[4]+"개");
+        List<LottoType> ranks = LottoType.getRanksForOutput();
+        for (int i = 0; i < ranks.size(); i++) {
+            LottoType rank = ranks.get(i);
+            String message = rank.getMessage();
+            int count = resultList[i];
+            System.out.println(message + " - " + count + "개");
+        }
         System.out.println("총 수익률은 "+rateOfReturn+"%입니다.");
     }
+
 
     /**
      * 에러 메시지 출력
